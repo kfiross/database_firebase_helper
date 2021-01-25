@@ -1,6 +1,6 @@
 library database_firebase_helper;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reflectable/reflectable.dart';
-
 // Annotate with this class to enable reflection.
 class FirebaseReflector extends Reflectable {
   const FirebaseReflector()
@@ -21,9 +21,8 @@ class _Id {
   const _Id();
 }
 
-class DatabaseFirebaseHelper {
-  static T getValue<T>(var snapshot) {
-
+extension DocumentSnapshotExtention on DocumentSnapshot {
+  T getValue<T>() {
     var typeMirror = firebaseReflector.reflectType(T);
     var newInstance = (typeMirror as ClassMirror).newInstance("", []);
 
@@ -36,18 +35,38 @@ class DatabaseFirebaseHelper {
 
       if (!v.metadata.isEmpty) {
         if (v.metadata.first is _Id) {
-          result.invokeSetter(key, snapshot.id);
+          result.invokeSetter(key, this.id);
         }
         else if (v.metadata.first is MapTo) {
           var name = (v.metadata.first as MapTo).name;
-          result.invokeSetter(key, snapshot.data[name]);
+          result.invokeSetter(key, this.get(name));
         }
       }
     }
 
     return result.reflectee as T;
   }
+}
 
+extension DocumentReferenceExtention on DocumentReference {
+  Future<void> update(object){
+    return this.update(DatabaseFirebaseHelper.toJson(object));
+  }
+
+  Future<void> set(object, [SetOptions options]){
+    return this.set(DatabaseFirebaseHelper.toJson(object), options);
+  }
+}
+
+extension CollectionReferenceExtention on CollectionReference{
+  Future<void> add(object){
+    return this.add(DatabaseFirebaseHelper.toJson(object));
+  }
+}
+
+
+
+class DatabaseFirebaseHelper {
   static Map toJson(value) {
     var result = {};
 
