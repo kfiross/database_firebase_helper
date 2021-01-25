@@ -2,6 +2,8 @@
 
 A Flutter (pure-dart) package to simpler FromMap/ToJson when working with Firebase Firestore
 
+Inspired by the implementation on Java :)<br>
+Heavily based on the great package  [reflectable](https://pub.dev/packages/reflectable) 
 ## Getting Started
 
 ### Setup
@@ -38,20 +40,39 @@ class MyClass{
 
 Use `build_runner` to generate the ` 'main.reflectable.dart'` file:
 ```
-> flutter pub run build_runner build
+$ flutter pub run build_runner build
 ```
-* run it each time you modify your classes
+* You have to run it each time you modify your classes
 
 
-# Usage
+## Usage
 
-* Get object from snapshot, for example:
+### On a document snapshot
+* Get your object directly from the snapshot, for example:
 ```dart
-var myClass = DatabaseFirebaseHelper.getValue<MyClass>(snapshot);
+DocSnapshot snapshot = FirebaseFirestore.getInstance.doc(<doc_path>)
+var myClass = snaphot.getValue<MyClass>(snapshot);
 ```
 
 
-* Convert Object into Map, for example:
+* You can also use `set` and `update` function from your object, for example:
 ```dart
-Map jsonMap = DatabaseFirebaseHelper.toJson(<MyClass Instance>);
+DocSnapshot snapshot = FirebaseFirestore.getInstance.doc("myCollection/myDoc")
+// set
+snaphot.set(<My Class Instance>);
+
+// update
+snaphot.update(<My Class Instance>);
+```
+
+* You can also can convert Object into Map, for example:
+```dart
+Map jsonMap = DatabaseFirebaseHelper.toJson(<My Class Instance>);
+```
+
+### On a collection snapshot
+* You can use `add` function using from an object, for example:
+```dart
+var snapshot = FirebaseFirestore.getInstance.collection("myCollection");
+snapshot.add(<My Class Instance>);
 ```
