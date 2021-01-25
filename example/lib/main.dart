@@ -1,7 +1,7 @@
 import 'package:database_firebase_helper/database_firebase_helper.dart';
 import 'package:flutter/material.dart';
-import 'main.reflectable.dart';
 import 'model/my_class.dart';
+import 'main.reflectable.dart';
 
 
 /// Mimic Firestore's DocumentSnapshot Object
