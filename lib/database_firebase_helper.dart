@@ -3,25 +3,11 @@ library database_firebase_helper;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reflectable/reflectable.dart';
 
-/// Annotate with this class will enable reflection.
-class FirebaseReflector extends Reflectable {
-  const FirebaseReflector()
-      : super(invokingCapability,typingCapability, reflectedTypeCapability, metadataCapability); // Request the capability to invoke methods.
-}
+part 'src/annotations.dart';
+part 'src/reflector.dart';
+
 
 const firebaseReflector = const FirebaseReflector();
-
-class MapTo {
-  final String name;
-
-  const MapTo(this.name);
-}
-
-const Id = const _Id();
-
-class _Id {
-  const _Id();
-}
 
 extension DocumentSnapshotExtention on DocumentSnapshot {
   /// Retrieve the data of the document into a (reflectable) object.
