@@ -7,4 +7,4 @@ class FirebaseReflector extends Reflectable {
 }
 
 /// shorthand usage
-const firebaseReflector = const _FirebaseReflector();
+const firebaseReflector = const FirebaseReflector();
