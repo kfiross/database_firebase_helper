@@ -1,6 +1,6 @@
 name: database_firebase_helper
 description: A Flutter (pure-dart) package to simpler FromMap/ToJson when working with Firebase Firestore
-version: 0.2.0
+version: 0.2.1+1
 repository: https://github.com/kfiross/database_firebase_helper
 
 environment:

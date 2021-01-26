@@ -1,7 +1,9 @@
 library database_firebase_helper;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reflectable/reflectable.dart';
-// Annotate with this class to enable reflection.
+
+/// Annotate with this class will enable reflection.
 class FirebaseReflector extends Reflectable {
   const FirebaseReflector()
       : super(invokingCapability,typingCapability, reflectedTypeCapability, metadataCapability); // Request the capability to invoke methods.
@@ -22,6 +24,7 @@ class _Id {
 }
 
 extension DocumentSnapshotExtention on DocumentSnapshot {
+  /// Retrieve the data of the document into a (reflectable) object.
   T getValue<T>() {
     var typeMirror = firebaseReflector.reflectType(T);
     var newInstance = (typeMirror as ClassMirror).newInstance("", []);
@@ -33,13 +36,14 @@ extension DocumentSnapshotExtention on DocumentSnapshot {
       var v = ve.value;
       var key = ve.key;
 
-      if (!v.metadata.isEmpty) {
-        if (v.metadata.first is _Id) {
-          result.invokeSetter(key, this.id);
+      for (var metadata in v.metadata) {
+
+        if (metadata is _Id) {
+          result.invokeSetter(key, id);
         }
-        else if (v.metadata.first is MapTo) {
-          var name = (v.metadata.first as MapTo).name;
-          result.invokeSetter(key, this.get(name));
+        else if (metadata is MapTo) {
+          var name = metadata.name;
+          result.invokeSetter(key, get(name));
         }
       }
     }
@@ -49,24 +53,39 @@ extension DocumentSnapshotExtention on DocumentSnapshot {
 }
 
 extension DocumentReferenceExtention on DocumentReference {
+
+  /// Updates data on the document using an object. Data will be merged with
+  /// any existing document data.
+  ///
+  /// If no document exists yet, the update will fail.
   Future<void> update(object){
     return this.update(DatabaseFirebaseHelper.toJson(object));
   }
 
+  /// Sets data on the document an object, overwriting any existing data. If the
+  /// document does not yet exist, it will be created.
+  ///
+  /// If [SetOptions] are provided, the data will be merged into an existing
+  /// document instead of overwriting.
   Future<void> set(object, [SetOptions options]){
     return this.set(DatabaseFirebaseHelper.toJson(object), options);
   }
 }
 
 extension CollectionReferenceExtention on CollectionReference{
-  Future<void> add(object){
+  /// Returns a `DocumentReference` with an auto-generated ID, after
+  /// populating it with provided [object].
+  ///
+  /// The unique key generated is prefixed with a client-generated timestamp
+  /// so that the resulting list will be chronologically-sorted.
+  Future<DocumentReference> add(object){
     return this.add(DatabaseFirebaseHelper.toJson(object));
   }
 }
 
 
-
 class DatabaseFirebaseHelper {
+  /// Convert any (reflectable) object into Map
   static Map toJson(value) {
     var result = {};
 
@@ -77,9 +96,9 @@ class DatabaseFirebaseHelper {
       var v = ve.value;
       var key = ve.key;
 
-      if (!v.metadata.isEmpty) {
-        if (v.metadata.first is MapTo) {
-          var name = (v.metadata.first as MapTo).name;
+      for (var metadata in v.metadata) {
+        if (metadata is MapTo) {
+          var name = metadata.name;
           result[name] = im.invokeGetter(key);
         }
       }
