@@ -6,9 +6,6 @@ import 'package:reflectable/reflectable.dart';
 part 'src/annotations.dart';
 part 'src/reflector.dart';
 
-
-const firebaseReflector = const FirebaseReflector();
-
 extension DocumentSnapshotExtention on DocumentSnapshot {
   /// Retrieve the data of the document into a (reflectable) object.
   T getValue<T>() {
