@@ -1,3 +1,7 @@
+## [0.2.1+1 - 0.2.1+6]
+
+* Fixed score.
+
 ## [0.2.1]
 
 * Fixed score and added docs. 
